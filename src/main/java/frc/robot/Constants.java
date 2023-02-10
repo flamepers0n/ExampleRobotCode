@@ -20,12 +20,26 @@ public final class Constants {
     public static final int kFrontRightCanId = 0;
     public static final int kBackLeftCanId = 0;
     public static final int kBackRightCanId = 0;
+
+    public static final double kGearRatio = 0;
+    public static final double kCountsPerRev = 4096;
+    public static final double wheelRadius = 0.1524;
+    public static final double kWheelRadiusInches = Math.PI * wheelRadius;
   }
   public static class PneumaticConstants{
     
   }
   public static class IntakeConstants {
     public static final int IntakeCANID = 0; //placeholder
+  }
+
+  public static class ElevatorConstants
+  {
+
+    public static final int moduleNumber = 0;
+    public static final int forwardSolenoidChannel = 0;
+    public static final int reverseSolenoidChannel = 0;
+    
   }
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;

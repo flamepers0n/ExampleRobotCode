@@ -5,22 +5,22 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
+import frc.robot.commands.ArcadeWithJoy;
 import frc.robot.commands.DoubleSolenoidForward;
 import frc.robot.commands.DoubleSolenoidReverse;
 import frc.robot.commands.IntakeComsume;
 import frc.robot.commands.IntakeEject;
-import frc.robot.commands.TankWithJoystick;
-import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Pneumatic;
-import frc.robot.subsystems.TankDrive;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.ElevatorConstants;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -30,17 +30,15 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final XboxController m_driverController = new XboxController(OperatorConstants.kDriverControllerPort);
-  private final TankDrive m_TankDrive = new TankDrive();
-  private final Pneumatic m_ArmPneumatic= new Pneumatic(0, 0, 1);
-  private final Pneumatic m_ElevatorPneumatic = new Pneumatic(1, 0, 1);
+  private final DriveTrain m_DriveTrain = new DriveTrain();
+  private final Pneumatic m_ElevatorPneumatic = new Pneumatic(ElevatorConstants.moduleNumber, ElevatorConstants.forwardSolenoidChannel, ElevatorConstants.reverseSolenoidChannel);
   private final Intake m_IntakeSubsystem = new Intake();
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
-    m_TankDrive.setDefaultCommand(new TankWithJoystick(m_driverController, m_TankDrive));
+    m_DriveTrain.setDefaultCommand(new ArcadeWithJoy(m_DriveTrain, m_driverController::getLeftY, m_driverController::getRightX));
     configureBindings();
   }
 
@@ -57,10 +55,10 @@ public class RobotContainer {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
 
 
-    new JoystickButton(m_driverController, Button.kA.value).whileTrue(new DoubleSolenoidReverse(m_ArmPneumatic));
-    new JoystickButton(m_driverController, Button.kB.value).whileTrue(new DoubleSolenoidForward(m_ArmPneumatic));
-    new JoystickButton(m_driverController, Button.kX.value).whileTrue(new DoubleSolenoidReverse(m_ElevatorPneumatic));
-    new JoystickButton(m_driverController, Button.kY.value).whileTrue(new DoubleSolenoidForward(m_ElevatorPneumatic));
+
+    //binds the elevator to move up when you press Y and down when you press X on the XboxController
+    new JoystickButton(m_driverController, XboxController.Button.kX.value).whileTrue(new DoubleSolenoidReverse(m_ElevatorPneumatic));
+    new JoystickButton(m_driverController, XboxController.Button.kY.value).whileTrue(new DoubleSolenoidForward(m_ElevatorPneumatic));
     
     new Trigger(() -> {
       if(m_driverController.getLeftTriggerAxis() > 0 || m_driverController.getLeftTriggerAxis() < 0) {
@@ -68,15 +66,20 @@ public class RobotContainer {
       } else {
         return false;
       }
-    } ).whileTrue(new IntakeEject(m_IntakeSubsystem, m_driverController::getLeftTriggerAxis));
+    } ).whileTrue(new IntakeEject(m_IntakeSubsystem, (m_driverController::getLeftTriggerAxis)));
+
+
     
-    new Trigger(() -> {
-      if(m_driverController.getRightTriggerAxis() > 0 || m_driverController.getRightTriggerAxis() < 0) {
-        return true;
-      } else {
-        return false;
-      }
-    } ).whileTrue(new IntakeComsume(m_IntakeSubsystem, m_driverController::getRightTriggerAxis));
+    // new Trigger(() -> {
+    //   if(m_driverController.getRightTriggerAxis() > 0 || m_driverController.getRightTriggerAxis() < 0) {
+    //     return true;
+    //   } else {
+    //     return false;
+    //   }
+    // } ).whileTrue(new IntakeComsume(m_IntakeSubsystem, m_driverController::getRightTriggerAxis));
+
+
+
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
   }
@@ -88,6 +91,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-     return Autos.exampleAuto(m_exampleSubsystem);
+     return new PrintCommand("fake auto");
    }
 }
