@@ -11,23 +11,14 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Pneumatic extends SubsystemBase {
   /** Creates a new Pneumatic. */
-  private final Compressor pcmCompressor; 
   private final Compressor phCompressor; 
-  private final DoubleSolenoid DoublePCM;
   private final DoubleSolenoid DoublePH;
   public Pneumatic(int moduleNumber, int forwardSolenoidChannel, int reverseSolenoidChannel) {
-      phCompressor = new Compressor(moduleNumber, PneumaticsModuleType.REVPH); // for use witht the REV Robotics Pneumatics Hub
-      DoublePH  = new DoubleSolenoid(moduleNumber, PneumaticsModuleType.REVPH, forwardSolenoidChannel, reverseSolenoidChannel); //PH Double Solenoid
-
-      pcmCompressor = new Compressor(moduleNumber, PneumaticsModuleType.CTREPCM); //for use with the CTRE Pneumatics Control Module
-      DoublePCM = new DoubleSolenoid(moduleNumber, PneumaticsModuleType.CTREPCM, forwardSolenoidChannel, reverseSolenoidChannel); //PCM Double Solenoid  
-  
-   
-
-
-    pcmCompressor.enableDigital(); //automatically compresses when pressure is low 
-    //pcmCompressor.enableAnalog(0, 0); //enables the compressor when pressure is below min and disables when at max
-    pcmCompressor.disable(); //disables the compressor
+    phCompressor = new Compressor(moduleNumber, PneumaticsModuleType.REVPH); // for use witht the REV Robotics Pneumatics Hub
+    DoublePH  = new DoubleSolenoid(moduleNumber, PneumaticsModuleType.REVPH, forwardSolenoidChannel, reverseSolenoidChannel); //PH Double Solenoid
+    
+     //dont konw if digital mode works or not, if things dont go to play try analog version
+     //phCompressor.enableAnalog(110, 120);
 
     phCompressor.enableDigital();
     phCompressor.disable();
@@ -38,16 +29,10 @@ public class Pneumatic extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  public Compressor getCompressorPCM(){
-    return pcmCompressor;
-  }
   public Compressor getCompressorPH(){
     return phCompressor;
   }
 
-  public DoubleSolenoid getDoubleSolenoidPCM(){
-    return DoublePCM;
-  }
   public DoubleSolenoid getDoubleSolenoidPH()
   {
     return DoublePH;
